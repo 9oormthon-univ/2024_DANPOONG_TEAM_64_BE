@@ -9,7 +9,7 @@
 > fix/{기능명} : 버그 수정 브랜치 (ex. fix/login) <br>
 > refactor/{기능명}: 개발된 기능 리팩토링 브랜치 (ex. refactor/rank)
 > <br><br>
-> 각 브랜치에서 작업 후 PR 생성히여 dev 브랜치로 merge<br>
+> 각 브랜치에서 작업 후 PR 생성하여 dev 브랜치로 merge<br>
 
 
 ### Git Convention
