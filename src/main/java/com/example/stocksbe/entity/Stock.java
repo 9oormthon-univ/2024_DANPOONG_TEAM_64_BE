@@ -3,6 +3,7 @@ package com.example.stocksbe.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "stocks")
 @Entity
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class Stock {
 
@@ -37,5 +39,5 @@ public class Stock {
     private BigDecimal closePrice;
 
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt; // DB 저장 시
+    private LocalDateTime createdAt; // DB 저장 시간
 }
