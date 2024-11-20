@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,36 +31,29 @@ public class StockService {
                 ticker, date, date, apiKey
         );
 
-        StockResponseDTO response = restTemplate.getForObject(url, StockResponseDTO.class);
+        try {
+            StockResponseDTO response = restTemplate.getForObject(url, StockResponseDTO.class);
 
-        if (response != null && response.getResults() != null) {
+            if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
+                return;
+            }
+
             List<StockResponseDTO.StockData> results = response.getResults();
             for (StockResponseDTO.StockData result : results) {
                 Stock stock = new Stock();
 
-                if(ticker.equals("APPL")){
-                    stock.setStockName("APPLE");
-                }
-                if(ticker.equals("META")){
-                    stock.setStockName("META");
-                }
-                if(ticker.equals("AMZN")){
-                    stock.setStockName("Amazon");
-                }
-                if(ticker.equals("NVDA")){
-                    stock.setStockName("NVIDIA");
-                }
-                if(ticker.equals("GOOGL")){
-                    stock.setStockName("Alphabet A");
-                }
-                if(ticker.equals("MSFT")){
-                    stock.setStockName("Microsoft");
+                switch (ticker) {
+                    case "AAPL" -> stock.setStockName("Apple");
+                    case "META" -> stock.setStockName("Meta");
+                    case "AMZN" -> stock.setStockName("Amazon");
+                    case "NVDA" -> stock.setStockName("NVIDIA");
+                    case "GOOGL" -> stock.setStockName("Alphabet A");
+                    case "MSFT" -> stock.setStockName("Microsoft");
+                    default -> stock.setStockName("Unknown");
                 }
 
                 stock.setStockTicker(ticker);
-
                 stock.setDate(LocalDate.parse(date));
-
                 stock.setAveragePrice(BigDecimal.valueOf(result.getAveragePrice()));
                 stock.setOpenPrice(BigDecimal.valueOf(result.getOpenPrice()));
                 stock.setClosePrice(BigDecimal.valueOf(result.getClosePrice()));
@@ -69,6 +61,8 @@ public class StockService {
 
                 stockRepository.save(stock);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
