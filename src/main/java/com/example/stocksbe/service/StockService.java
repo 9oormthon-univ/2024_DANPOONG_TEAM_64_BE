@@ -34,11 +34,11 @@ public class StockService {
         try {
             StockResponseDTO response = restTemplate.getForObject(url, StockResponseDTO.class);
 
-            if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
+            if (response == null || response.results() == null || response.results().isEmpty()) {
                 return;
             }
 
-            List<StockResponseDTO.StockData> results = response.getResults();
+            List<StockResponseDTO.StockData> results = response.results();
             for (StockResponseDTO.StockData result : results) {
                 Stock stock = new Stock();
 
@@ -54,9 +54,9 @@ public class StockService {
 
                 stock.setStockTicker(ticker);
                 stock.setDate(LocalDate.parse(date));
-                stock.setAveragePrice(BigDecimal.valueOf(result.getAveragePrice()));
-                stock.setOpenPrice(BigDecimal.valueOf(result.getOpenPrice()));
-                stock.setClosePrice(BigDecimal.valueOf(result.getClosePrice()));
+                stock.setAveragePrice(BigDecimal.valueOf(result.averagePrice()));
+                stock.setOpenPrice(BigDecimal.valueOf(result.openPrice()));
+                stock.setClosePrice(BigDecimal.valueOf(result.closePrice()));
                 stock.setCreatedAt(LocalDateTime.now());
 
                 stockRepository.save(stock);
@@ -64,8 +64,5 @@ public class StockService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
-
 }
