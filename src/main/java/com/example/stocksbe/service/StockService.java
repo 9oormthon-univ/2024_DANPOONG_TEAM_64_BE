@@ -5,7 +5,9 @@ import com.example.stocksbe.entity.Stock;
 import com.example.stocksbe.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -61,7 +63,14 @@ public class StockService {
 
                 stockRepository.save(stock);
             }
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+                System.err.println("403 Error Occurred, API 권한 문제 발생, URL: " + url);
+            } else {
+                System.err.println(e.getStatusCode());
+                throw e;
+            }
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
