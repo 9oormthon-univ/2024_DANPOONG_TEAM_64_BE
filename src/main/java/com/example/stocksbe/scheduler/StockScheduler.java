@@ -17,7 +17,7 @@ public class StockScheduler {
 
     private final StockService stockService;
 
-    @Scheduled(cron = "1 1 6 * * ?", zone = "Asia/Seoul") // 06:01
+    @Scheduled(cron = "1 1 14 * * ?", zone = "Asia/Seoul") // 14:01:01
     public void stockGroup1() {
         List<String> tickers = List.of("AAPL", "META", "AMZN"); // APPLE, META, Amazon
         String marketDate = getMarketDate();
@@ -29,7 +29,7 @@ public class StockScheduler {
         }
     }
 
-    @Scheduled(cron = "1 2 6 * * ?", zone = "Asia/Seoul") // 06:02
+    @Scheduled(cron = "1 2 14 * * ?", zone = "Asia/Seoul") // 14:02:01
     public void stockGroup2() {
         List<String> tickers = List.of("NVDA", "GOOGL", "MSFT"); // NVIDIA, Alphabet A, Microsoft
         String marketDate = getMarketDate();
