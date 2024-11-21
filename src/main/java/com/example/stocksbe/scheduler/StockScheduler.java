@@ -22,6 +22,8 @@ public class StockScheduler {
         List<String> tickers = List.of("AAPL", "META", "AMZN"); // APPLE, META, Amazon
         String marketDate = getMarketDate();
 
+        System.out.println("StockGroup1 Scheduler 실행");
+
         for (String ticker : tickers) {
             stockService.getAndSaveStockData(ticker, marketDate);
         }
@@ -32,12 +34,14 @@ public class StockScheduler {
         List<String> tickers = List.of("NVDA", "GOOGL", "MSFT"); // NVIDIA, Alphabet A, Microsoft
         String marketDate = getMarketDate();
 
+        System.out.println("StockGroup2 Scheduler 실행");
+
         for (String ticker : tickers) {
             stockService.getAndSaveStockData(ticker, marketDate);
         }
     }
 
-    public String getMarketDate() {  // 미국 시장 기준 날짜 계산
+    public String getMarketDate() {  // 미국 시장 기준 날짜 변환
         ZonedDateTime nowKST = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
         ZonedDateTime yesterdayKST = nowKST.minusDays(1);
