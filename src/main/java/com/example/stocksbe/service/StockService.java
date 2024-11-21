@@ -65,11 +65,9 @@ public class StockService {
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                System.err.println("403 Error Occurred, API 권한 문제 발생, URL: " + url);
-            } else {
-                System.err.println(e.getStatusCode());
-                throw e;
+                throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "API 요청 권한 없음, 전날 데이터는 14시 이후에 호출 가능");
             }
+            throw e;
         }catch (Exception e) {
             e.printStackTrace();
         }
