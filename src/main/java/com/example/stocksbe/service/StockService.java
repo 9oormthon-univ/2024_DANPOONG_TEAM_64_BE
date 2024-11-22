@@ -1,8 +1,15 @@
 package com.example.stocksbe.service;
 
+import com.example.stocksbe.dto.PredictionRequestDTO;
+import com.example.stocksbe.dto.PredictionResponseDTO;
+import com.example.stocksbe.dto.StockDataDTO;
 import com.example.stocksbe.dto.StockResponseDTO;
+import com.example.stocksbe.entity.Prediction;
 import com.example.stocksbe.entity.Stock;
+import com.example.stocksbe.entity.User;
+import com.example.stocksbe.repository.PredictionRepository;
 import com.example.stocksbe.repository.StockRepository;
+import com.example.stocksbe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,7 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockService {
 
+    private final UserRepository userRepository;
     private final StockRepository stockRepository;
+    private final PredictionRepository predictionRepository;
 
     private final RestTemplate restTemplate;
 
@@ -34,14 +43,14 @@ public class StockService {
         );
 
         try {
-            StockResponseDTO response = restTemplate.getForObject(url, StockResponseDTO.class);
+            StockDataDTO response = restTemplate.getForObject(url, StockDataDTO.class);
 
             if (response == null || response.results() == null || response.results().isEmpty()) {
                 return;
             }
 
-            List<StockResponseDTO.StockData> results = response.results();
-            for (StockResponseDTO.StockData result : results) {
+            List<StockDataDTO.StockData> results = response.results();
+            for (StockDataDTO.StockData result : results) {
                 Stock stock = new Stock();
 
                 switch (ticker) {
@@ -71,5 +80,57 @@ public class StockService {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public StockResponseDTO getStock(String ticker){
+        LocalDate period = LocalDate.now().minusDays(30);
+        List<Stock> stocks = stockRepository.findByStockTickerAndDateAfter(ticker, period);
+
+        if (stocks.isEmpty()) {
+            return null;
+        }
+
+        Stock stock = stocks.get(0);
+
+        List<StockResponseDTO.dailyStockData> dailyResults = stocks.stream()
+                .map(s -> new StockResponseDTO.dailyStockData(
+                        s.getDate(),
+                        s.getAveragePrice(),
+                        s.getOpenPrice(),
+                        s.getClosePrice()
+                ))
+                .toList();
+
+        return new StockResponseDTO(
+                stock.getStockName(),
+                stock.getStockTicker(),
+                dailyResults
+        );
+    }
+
+    public PredictionResponseDTO createPrediction(PredictionRequestDTO requestDTO, Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
+        boolean alreadyPredicted = predictionRepository.existsByUserIdAndPredictDate(userId, LocalDate.now());
+        if (alreadyPredicted) {
+            throw new IllegalStateException("이미 예측을 완료하였습니다. 예측은 하루에 한번만 가능합니다.");
+        }
+
+        Prediction prediction = new Prediction();
+        prediction.setPredictDate(LocalDate.now());
+        prediction.setPredictStockTicker(requestDTO.predictStockTicker());
+        prediction.setMyPredict(requestDTO.myPredict());
+        prediction.setUser(user);
+
+        predictionRepository.save(prediction);
+
+        return new PredictionResponseDTO(
+                user.getId(),
+                prediction.getPredictDate(),
+                prediction.getPredictStockTicker(),
+                prediction.getMyPredict()
+        );
     }
 }

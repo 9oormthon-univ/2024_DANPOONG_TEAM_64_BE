@@ -1,16 +1,20 @@
 package com.example.stocksbe.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public record StockResponseDTO(
-        String ticker,
-        List<StockData> results
+        String stockName,
+        String StockTicker,
+        List<dailyStockData> dailyResults
+
 ) {
-    public record StockData(
-            @JsonProperty("t") Long timestamp,
-            @JsonProperty("c") Double closePrice,
-            @JsonProperty("o") Double openPrice,
-            @JsonProperty("vw") Double averagePrice
-    ) {}
+
+    public record dailyStockData(
+            LocalDate date,
+            BigDecimal averagePrice,
+            BigDecimal openPrice,
+            BigDecimal closePrice
+    ){}
 }
