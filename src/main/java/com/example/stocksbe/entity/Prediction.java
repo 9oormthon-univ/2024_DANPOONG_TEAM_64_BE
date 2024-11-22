@@ -3,12 +3,14 @@ package com.example.stocksbe.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Table(name = "predictions")
 @Entity
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class Prediction {
 
@@ -20,7 +22,7 @@ public class Prediction {
     private LocalDate predictDate;
 
     @Column(nullable = false)
-    private String predictStock;
+    private String predictStockTicker;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

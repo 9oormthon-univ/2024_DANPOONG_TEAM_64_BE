@@ -1,9 +1,15 @@
 package com.example.stocksbe.service;
 
+import com.example.stocksbe.dto.PredictionRequestDTO;
+import com.example.stocksbe.dto.PredictionResponseDTO;
 import com.example.stocksbe.dto.StockDataDTO;
 import com.example.stocksbe.dto.StockResponseDTO;
+import com.example.stocksbe.entity.Prediction;
 import com.example.stocksbe.entity.Stock;
+import com.example.stocksbe.entity.User;
+import com.example.stocksbe.repository.PredictionRepository;
 import com.example.stocksbe.repository.StockRepository;
+import com.example.stocksbe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,7 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockService {
 
+    private final UserRepository userRepository;
     private final StockRepository stockRepository;
+    private final PredictionRepository predictionRepository;
 
     private final RestTemplate restTemplate;
 
@@ -98,5 +106,30 @@ public class StockService {
                 stock.getStockTicker(),
                 dailyResults
         );
+    }
+
+    public PredictionResponseDTO createPrediction(PredictionRequestDTO requestDTO, Long userId){
+
+        User user = setTempUser(userId); // 임시 사용자 설정
+
+        Prediction prediction = new Prediction();
+        prediction.setPredictDate(LocalDate.now());
+        prediction.setPredictStockTicker(requestDTO.predictStockTicker());
+        prediction.setMyPredict(requestDTO.myPredict());
+        prediction.setUser(user);
+
+        predictionRepository.save(prediction);
+
+        return new PredictionResponseDTO(
+                user.getId(),
+                prediction.getPredictDate(),
+                prediction.getPredictStockTicker(),
+                prediction.getMyPredict()
+        );
+    }
+
+    public User setTempUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
     }
 }
