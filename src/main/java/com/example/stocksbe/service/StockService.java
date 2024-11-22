@@ -7,6 +7,8 @@ import com.example.stocksbe.dto.StockResponseDTO;
 import com.example.stocksbe.entity.Prediction;
 import com.example.stocksbe.entity.Stock;
 import com.example.stocksbe.entity.User;
+import com.example.stocksbe.exception.GeneralException;
+import com.example.stocksbe.exception.PredictionException;
 import com.example.stocksbe.repository.PredictionRepository;
 import com.example.stocksbe.repository.StockRepository;
 import com.example.stocksbe.repository.UserRepository;
@@ -115,7 +117,7 @@ public class StockService {
 
         boolean alreadyPredicted = predictionRepository.existsByUserIdAndPredictDate(userId, LocalDate.now());
         if (alreadyPredicted) {
-            throw new IllegalStateException("이미 예측을 완료하였습니다. 예측은 하루에 한번만 가능합니다.");
+            throw new GeneralException(PredictionException.ALREADY_EXIST);
         }
 
         Prediction prediction = new Prediction();
