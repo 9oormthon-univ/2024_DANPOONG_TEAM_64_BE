@@ -1,11 +1,10 @@
 package com.example.stocksbe.controller;
 
+import com.example.stocksbe.dto.StockResponseDTO;
 import com.example.stocksbe.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,4 +21,15 @@ public class StockController {
         return ResponseEntity.ok(ticker + " 종목의 " + date + " 데이터를 저장");
     }
 
+    @GetMapping("/stocks/{ticker}")
+    public ResponseEntity<StockResponseDTO> getStockByTicker(
+            @PathVariable String ticker){
+        StockResponseDTO responseDTO = stockService.getStock(ticker);
+
+        if (responseDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(responseDTO);
+    }
 }

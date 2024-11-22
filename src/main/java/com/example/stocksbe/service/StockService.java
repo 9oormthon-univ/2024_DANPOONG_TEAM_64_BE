@@ -83,12 +83,8 @@ public class StockService {
         }
 
         Stock stock = stocks.get(0);
-        StockResponseDTO responseDTO = new StockResponseDTO(
-                stock.getStockName(),
-                stock.getStockTicker()
-        );
 
-        List<StockResponseDTO.dailyStockData> dailyData = stocks.stream()
+        List<StockResponseDTO.dailyStockData> dailyResults = stocks.stream()
                 .map(s -> new StockResponseDTO.dailyStockData(
                         s.getDate(),
                         s.getAveragePrice(),
@@ -97,6 +93,10 @@ public class StockService {
                 ))
                 .toList();
 
-        return responseDTO;
+        return new StockResponseDTO(
+                stock.getStockName(),
+                stock.getStockTicker(),
+                dailyResults
+        );
     }
 }
