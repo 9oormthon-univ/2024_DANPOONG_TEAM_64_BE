@@ -3,7 +3,7 @@ package com.example.stocksbe.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
-public record StockResponseDTO(
+public record StockDataDTO(
         String ticker,
         List<StockData> results
 ) {

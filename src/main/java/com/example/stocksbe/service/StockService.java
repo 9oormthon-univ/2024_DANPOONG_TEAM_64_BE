@@ -1,6 +1,6 @@
 package com.example.stocksbe.service;
 
-import com.example.stocksbe.dto.StockResponseDTO;
+import com.example.stocksbe.dto.StockDataDTO;
 import com.example.stocksbe.entity.Stock;
 import com.example.stocksbe.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +34,14 @@ public class StockService {
         );
 
         try {
-            StockResponseDTO response = restTemplate.getForObject(url, StockResponseDTO.class);
+            StockDataDTO response = restTemplate.getForObject(url, StockDataDTO.class);
 
             if (response == null || response.results() == null || response.results().isEmpty()) {
                 return;
             }
 
-            List<StockResponseDTO.StockData> results = response.results();
-            for (StockResponseDTO.StockData result : results) {
+            List<StockDataDTO.StockData> results = response.results();
+            for (StockDataDTO.StockData result : results) {
                 Stock stock = new Stock();
 
                 switch (ticker) {
