@@ -110,7 +110,13 @@ public class StockService {
 
     public PredictionResponseDTO createPrediction(PredictionRequestDTO requestDTO, Long userId){
 
-        User user = setTempUser(userId); // 임시 사용자 설정
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
+        boolean alreadyPredicted = predictionRepository.existsByUserIdAndPredictDate(userId, LocalDate.now());
+        if (alreadyPredicted) {
+            throw new IllegalStateException("이미 예측을 완료하였습니다. 예측은 하루에 한번만 가능합니다.");
+        }
 
         Prediction prediction = new Prediction();
         prediction.setPredictDate(LocalDate.now());
@@ -126,10 +132,5 @@ public class StockService {
                 prediction.getPredictStockTicker(),
                 prediction.getMyPredict()
         );
-    }
-
-    public User setTempUser(Long userId){
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
     }
 }

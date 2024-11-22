@@ -1,5 +1,7 @@
 package com.example.stocksbe.controller;
 
+import com.example.stocksbe.dto.PredictionRequestDTO;
+import com.example.stocksbe.dto.PredictionResponseDTO;
 import com.example.stocksbe.dto.StockResponseDTO;
 import com.example.stocksbe.service.StockService;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,17 @@ public class StockController {
         }
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/stocks/choices")
+    public ResponseEntity<PredictionResponseDTO> makeDailyChoice(
+            @RequestBody PredictionRequestDTO requestDTO){
+
+        Long userId = 1L; // 임시 사용자 설정
+
+        PredictionResponseDTO responseDTO = stockService.createPrediction(requestDTO, userId);
+
+        return ResponseEntity.ok(responseDTO);
+
     }
 }
