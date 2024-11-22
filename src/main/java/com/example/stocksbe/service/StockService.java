@@ -1,6 +1,7 @@
 package com.example.stocksbe.service;
 
 import com.example.stocksbe.dto.StockDataDTO;
+import com.example.stocksbe.dto.StockResponseDTO;
 import com.example.stocksbe.entity.Stock;
 import com.example.stocksbe.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +72,31 @@ public class StockService {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public StockResponseDTO getStock(String ticker){
+        LocalDate period = LocalDate.now().minusDays(30);
+        List<Stock> stocks = stockRepository.findByStockTickerAndDateAfter(ticker, period);
+
+        if (stocks.isEmpty()) {
+            return null;
+        }
+
+        Stock stock = stocks.get(0);
+        StockResponseDTO responseDTO = new StockResponseDTO(
+                stock.getStockName(),
+                stock.getStockTicker()
+        );
+
+        List<StockResponseDTO.dailyStockData> dailyData = stocks.stream()
+                .map(s -> new StockResponseDTO.dailyStockData(
+                        s.getDate(),
+                        s.getAveragePrice(),
+                        s.getOpenPrice(),
+                        s.getClosePrice()
+                ))
+                .toList();
+
+        return responseDTO;
     }
 }
