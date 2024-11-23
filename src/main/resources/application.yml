@@ -21,3 +21,8 @@ spring:
       credentials:
         access-key: ${AWS_S3_ACCESS_KEY}
         secret-key: ${AWS_S3_SECRET_KEY}
+
+  kakao:
+    client_id: ${REST API KEY}
+    secret: iklU5D5kbNbY2LWI8l1UIMjNTU9SdUBz
+    redirect_uri: http://localhost:8080/auth/login/kakao
