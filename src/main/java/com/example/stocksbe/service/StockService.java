@@ -115,7 +115,7 @@ public class StockService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        boolean alreadyPredicted = predictionRepository.existsByUserIdAndPredictDate(userId, LocalDate.now());
+        boolean alreadyPredicted = predictionRepository.existsByUserUidAndPredictDate(userId, LocalDate.now());
         if (alreadyPredicted) {
             throw new GeneralException(PredictionException.ALREADY_EXIST);
         }
@@ -129,7 +129,7 @@ public class StockService {
         predictionRepository.save(prediction);
 
         return new PredictionResponseDTO(
-                user.getId(),
+                user.getUid(),
                 prediction.getPredictDate(),
                 prediction.getPredictStockTicker(),
                 prediction.getMyPredict()
